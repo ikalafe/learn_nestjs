@@ -1,12 +1,29 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { TestController } from './test.controller';
-import { TestService } from './test.service';
+import { PostModule } from './post/post.module';
+import { LoggerMiddleware } from './middleware/logger.middleware';
+import { PostMiddleware } from './middleware/post.middleware';
 
 @Module({
-  imports: [],
-  controllers: [AppController, TestController],
-  providers: [AppService, TestService],
+  imports: [PostModule],
+  controllers: [AppController],
+  providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoggerMiddleware)
+      .exclude('/')
+      .forRoutes({ path: 'posts', method: RequestMethod.ALL });
+
+    consumer
+      .apply(PostMiddleware)
+      .forRoutes({ path: 'post', method: RequestMethod.GET });
+  }
+}
