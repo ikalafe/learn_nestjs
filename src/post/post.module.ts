@@ -1,17 +1,14 @@
-import {
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-  RequestMethod,
-} from '@nestjs/common';
-import { PostController } from './post.controller';
+import { Module } from '@nestjs/common';
 import { PostService } from './post.service';
-import { LoggerMiddleware } from 'src/middleware/logger.middleware';
+import { PostController } from './post.controller';
+import { MongooseModule } from '@nestjs/mongoose';
+import { Post, PostSchema } from './schemas/post.schema';
 
 @Module({
-  imports: [],
-  controllers: [PostController],
+  imports: [
+    MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
+  ],
   providers: [PostService],
-  exports: [PostModule],
+  controllers: [PostController],
 })
 export class PostModule {}
