@@ -7,23 +7,16 @@ import {
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PostModule } from './post/post.module';
-import { LoggerMiddleware } from './middleware/logger.middleware';
-import { PostMiddleware } from './middleware/post.middleware';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
-  imports: [PostModule],
+  imports: [
+    PostModule,
+    MongooseModule.forRoot(
+      'mongodb+srv://daniyaldehghan2021:5UcUZbsYRCGYBBNu@postclustor.jogj8.mongodb.net/post_db?retryWrites=true&w=majority&appName=PostClustor',
+    ),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(LoggerMiddleware)
-      .exclude('/')
-      .forRoutes({ path: 'posts', method: RequestMethod.ALL });
-
-    consumer
-      .apply(PostMiddleware)
-      .forRoutes({ path: 'post', method: RequestMethod.GET });
-  }
-}
+export class AppModule {}
